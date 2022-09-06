@@ -14,14 +14,19 @@ const notifyPoolKeyGenerator = (
 }
 
 const notifyPoolValueGenerator = (
-  { repeatNotifyCount }: {
+  { repeatNotifyCount, notifyTime }: {
     repeatNotifyCount: number
+    notifyTime: string
   } = {
-    repeatNotifyCount: 0
+    repeatNotifyCount: 0,
+    notifyTime: '00:00:00',
   }
 ) => {
+  const processRepeatNotifyCount = repeatNotifyCount + 1
+
   return {
-    repeatNotifyCount,
+    repeatNotifyCount: processRepeatNotifyCount,
+    notifyTime,
   }
 }
 
@@ -30,12 +35,12 @@ const notifyTimesConverter = function (userCommand: COMMAND) {
   
   return notifyTimes.reduce((prev, notifyTime) => ({
     ...prev,
-    [notifyPoolKeyGenerator({ notifyTime })]: notifyPoolValueGenerator(userCommand),
+    [notifyPoolKeyGenerator({ notifyTime })]: notifyPoolValueGenerator({ notifyTime: notifyPoolKeyGenerator({ notifyTime }), ...userCommand }),
   }), {})
 }
 
 export default function (userCommand: COMMAND) {
-  let notifyPool: Record<string, NOTIFY_TYPE> = {}
+  let notifyPool: NOTIFY_POOL = {}
   
   notifyPool = notifyTimesConverter(userCommand)
 

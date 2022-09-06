@@ -1,13 +1,13 @@
 import Command from './util/command'
 import Pool from './util/pool'
+import Processor from './util/processor'
 
 (async () => {
   const userCommand = await Command() as COMMAND | undefined
 
-  // while (true) {
-    // if (userCommand === undefined) break
-    if (userCommand === undefined) return
+  if (userCommand === undefined) return
+
+  const pool = Pool(userCommand)
   
-    const pool = Pool(userCommand)
-  // }
+  Processor(pool)
 })()
